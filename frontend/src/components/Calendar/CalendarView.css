@@ -1,0 +1,27 @@
+.calendar-wrapper {
+  padding: 24px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* FullCalendar event styles */
+.fc .event--complete {
+  opacity: 0.5;
+  text-decoration: line-through;
+}
+
+.fc .event--urgent   { background-color: #dc2626 !important; border-color: #dc2626 !important; }
+.fc .event--high     { background-color: #ea580c !important; border-color: #ea580c !important; }
+.fc .event--medium   { background-color: #6366f1 !important; border-color: #6366f1 !important; }
+.fc .event--low      { background-color: #16a34a !important; border-color: #16a34a !important; }
+.fc .event--optional { background-color: #64748b !important; border-color: #64748b !important; }
+.fc .event--pending  { background-color: #6366f1 !important; border-color: #6366f1 !important; }
+
+.fc .fc-daygrid-day:hover {
+  background: #f5f3ff;
+  cursor: pointer;
+}
+
+.fc .fc-day-today {
+  background: #eef2ff !important;
+}
