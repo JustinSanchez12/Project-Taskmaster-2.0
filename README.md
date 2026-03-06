@@ -1,6 +1,19 @@
 # Taskmaster 2.0
 
-A calendar-based task manager. Click a date, add tasks, check them off.
+### Objective
+
+Taskmaster 2.0 is a calendar-based web application that allows users to create daily task, set priority of each task, and cross off task that are completed.
+
+Phase 1: 
+- Create a calendar-based task manager 
+- Allow users to add, edit, set priority, and check off tasks
+
+Phase 2:
+- More in depth on task making (e.g. Time specific, etc.)
+- Longer spanning task (multiple days)
+
+Phase 3: 
+- Agentic models to help setup and optimize task tracking and scheduling
 
 ## Quick Start
 
