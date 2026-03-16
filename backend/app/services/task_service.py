@@ -45,6 +45,7 @@ class TaskService:
             title=payload.title,
             scheduled_date=payload.scheduled_date,
             scheduled_time=payload.scheduled_time,
+            scheduled_end_time=payload.scheduled_end_time,
             due_date=payload.end_date,  # end_date in schema maps to due_date column
             description=payload.description,
             priority=payload.priority,
