@@ -8,12 +8,18 @@ interface Props {
   onDelete: (id: string) => void;
 }
 
-function formatTime(isoDatetime: string): string {
-  const d = new Date(isoDatetime);
-  return d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+function fmt(isoDatetime: string): string {
+  return new Date(isoDatetime).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+}
+
+function formatTimeRange(start: string | null, end: string | null): string | null {
+  if (!start) return null;
+  return end ? `${fmt(start)} – ${fmt(end)}` : fmt(start);
 }
 
 export function TaskItem({ task, onToggle, onEdit, onDelete }: Props) {
+  const timeLabel = formatTimeRange(task.scheduled_time, task.scheduled_end_time);
+
   return (
     <div className={`task-item ${task.is_complete ? "complete" : ""}`}>
       <input
@@ -23,9 +29,7 @@ export function TaskItem({ task, onToggle, onEdit, onDelete }: Props) {
       />
       <div className="task-main">
         <span className="task-title">{task.title}</span>
-        {task.scheduled_time && (
-          <span className="task-time">{formatTime(task.scheduled_time)}</span>
-        )}
+        {timeLabel && <span className="task-time">{timeLabel}</span>}
       </div>
       {task.priority && (
         <span className={`priority priority--${task.priority.toLowerCase()}`}>
