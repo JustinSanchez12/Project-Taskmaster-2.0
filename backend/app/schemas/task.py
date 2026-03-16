@@ -10,6 +10,7 @@ class TaskCreate(BaseModel):
     title: str = Field(..., min_length=1, max_length=255)
     scheduled_date: date
     scheduled_time: Optional[datetime] = None
+    scheduled_end_time: Optional[datetime] = None
     end_date: Optional[date] = None  # last day for multi-day tasks
     description: Optional[str] = None
     priority: Optional[Priority] = None
@@ -19,6 +20,7 @@ class TaskUpdate(BaseModel):
     title: Optional[str] = Field(None, min_length=1, max_length=255)
     scheduled_date: Optional[date] = None
     scheduled_time: Optional[datetime] = None
+    scheduled_end_time: Optional[datetime] = None
     end_date: Optional[date] = None  # last day for multi-day tasks (inclusive)
     is_complete: Optional[bool] = None
     description: Optional[str] = None
@@ -35,6 +37,7 @@ class TaskResponse(BaseModel):
     description: Optional[str]
     priority: Optional[Priority]
     scheduled_time: Optional[datetime]
+    scheduled_end_time: Optional[datetime]
     due_date: Optional[date]
     ai_notes: Optional[str]
     is_locked: bool
