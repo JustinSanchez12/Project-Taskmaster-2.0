@@ -9,6 +9,8 @@ from app.models.task import Priority
 class TaskCreate(BaseModel):
     title: str = Field(..., min_length=1, max_length=255)
     scheduled_date: date
+    scheduled_time: Optional[datetime] = None
+    end_date: Optional[date] = None  # last day for multi-day tasks
     description: Optional[str] = None
     priority: Optional[Priority] = None
 
@@ -16,10 +18,11 @@ class TaskCreate(BaseModel):
 class TaskUpdate(BaseModel):
     title: Optional[str] = Field(None, min_length=1, max_length=255)
     scheduled_date: Optional[date] = None
+    scheduled_time: Optional[datetime] = None
+    end_date: Optional[date] = None  # last day for multi-day tasks (inclusive)
     is_complete: Optional[bool] = None
     description: Optional[str] = None
     priority: Optional[Priority] = None
-    scheduled_time: Optional[datetime] = None
     is_locked: Optional[bool] = None
 
 
