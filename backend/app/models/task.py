@@ -40,6 +40,7 @@ class Task(Base):
     description = Column(Text, nullable=True)
     priority = Column(Enum(Priority, name="priority_enum"), nullable=True)
     scheduled_time = Column(DateTime, nullable=True)
+    scheduled_end_time = Column(DateTime, nullable=True)
     due_date = Column(Date, nullable=True)
 
     # AI agent fields
