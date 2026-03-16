@@ -24,6 +24,10 @@ export default function App() {
     await addTask(payload);
   };
 
+  const handleUpdate = async (id: string, payload: TaskUpdate) => {
+    await patchTask(id, payload);
+  };
+
   const handleToggle = (id: string, payload: TaskUpdate) => {
     patchTask(id, payload);
   };
@@ -32,8 +36,13 @@ export default function App() {
     removeTask(id);
   };
 
+  // Include single-day tasks and multi-day tasks that span the selected date
   const tasksForSelectedDate = selectedDate
-    ? tasks.filter((t) => t.scheduled_date === selectedDate)
+    ? tasks.filter((t) => {
+        if (t.scheduled_date === selectedDate) return true;
+        if (t.due_date && t.scheduled_date <= selectedDate && t.due_date >= selectedDate) return true;
+        return false;
+      })
     : [];
 
   return (
@@ -55,6 +64,7 @@ export default function App() {
           date={selectedDate}
           tasks={tasksForSelectedDate}
           onAdd={handleAdd}
+          onUpdate={handleUpdate}
           onToggle={handleToggle}
           onDelete={handleDelete}
           onClose={() => setSelectedDate(null)}

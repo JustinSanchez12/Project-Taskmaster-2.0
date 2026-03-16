@@ -4,10 +4,16 @@ import "./TaskItem.css";
 interface Props {
   task: Task;
   onToggle: (id: string, payload: TaskUpdate) => void;
+  onEdit: (task: Task) => void;
   onDelete: (id: string) => void;
 }
 
-export function TaskItem({ task, onToggle, onDelete }: Props) {
+function formatTime(isoDatetime: string): string {
+  const d = new Date(isoDatetime);
+  return d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+}
+
+export function TaskItem({ task, onToggle, onEdit, onDelete }: Props) {
   return (
     <div className={`task-item ${task.is_complete ? "complete" : ""}`}>
       <input
@@ -15,8 +21,20 @@ export function TaskItem({ task, onToggle, onDelete }: Props) {
         checked={task.is_complete}
         onChange={() => onToggle(task.id, { is_complete: !task.is_complete })}
       />
-      <span className="task-title">{task.title}</span>
-      {task.priority && <span className={`priority priority--${task.priority.toLowerCase()}`}>{task.priority}</span>}
+      <div className="task-main">
+        <span className="task-title">{task.title}</span>
+        {task.scheduled_time && (
+          <span className="task-time">{formatTime(task.scheduled_time)}</span>
+        )}
+      </div>
+      {task.priority && (
+        <span className={`priority priority--${task.priority.toLowerCase()}`}>
+          {task.priority}
+        </span>
+      )}
+      <button className="edit-btn" onClick={() => onEdit(task)} aria-label="Edit task">
+        ✎
+      </button>
       <button className="delete-btn" onClick={() => onDelete(task.id)} aria-label="Delete task">
         ×
       </button>

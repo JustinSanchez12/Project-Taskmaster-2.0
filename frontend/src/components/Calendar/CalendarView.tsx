@@ -12,11 +12,19 @@ interface Props {
   onDatesChange: (startDate: string, endDate: string) => void;
 }
 
+function addOneDay(dateStr: string): string {
+  const d = new Date(dateStr + "T00:00:00");
+  d.setDate(d.getDate() + 1);
+  return d.toISOString().split("T")[0];
+}
+
 function taskToEvent(task: Task): EventInput {
   return {
     id: task.id,
     title: task.title,
     start: task.scheduled_date,
+    // FullCalendar end is exclusive, so +1 day to include due_date itself
+    end: task.due_date ? addOneDay(task.due_date) : undefined,
     allDay: true,
     classNames: [
       task.is_complete ? "event--complete" : "event--pending",

@@ -19,6 +19,8 @@ export interface Task {
 export interface TaskCreate {
   title: string;
   scheduled_date: string;
+  scheduled_time?: string;  // ISO datetime string
+  end_date?: string;        // last day for multi-day tasks "YYYY-MM-DD"
   description?: string;
   priority?: Priority;
 }
@@ -26,9 +28,10 @@ export interface TaskCreate {
 export interface TaskUpdate {
   title?: string;
   scheduled_date?: string;
+  scheduled_time?: string;  // ISO datetime string
+  end_date?: string;        // last day for multi-day tasks "YYYY-MM-DD"
   is_complete?: boolean;
   description?: string;
   priority?: Priority;
-  scheduled_time?: string;
   is_locked?: boolean;
 }
