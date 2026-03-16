@@ -22,6 +22,12 @@ function toTimeInput(isoDatetime: string | null): string {
   return d.toTimeString().slice(0, 5); // "HH:MM"
 }
 
+// Extract "YYYY-MM-DD" from an ISO datetime string
+function toDateInput(isoDatetime: string | null): string {
+  if (!isoDatetime) return "";
+  return isoDatetime.slice(0, 10);
+}
+
 // Build an ISO datetime string from a date string + "HH:MM" time string
 function toISODatetime(dateStr: string, timeStr: string): string {
   return `${dateStr}T${timeStr}:00`;
@@ -31,16 +37,18 @@ export function TaskModal({ date, tasks, onAdd, onUpdate, onToggle, onDelete, on
   // --- Create form state ---
   const [title, setTitle] = useState("");
   const [priority, setPriority] = useState<Priority | "">("");
-  const [time, setTime] = useState("");
+  const [startTime, setStartTime] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [endTime, setEndTime] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   // --- Edit form state ---
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [editDate, setEditDate] = useState("");
-  const [editTime, setEditTime] = useState("");
+  const [editStartTime, setEditStartTime] = useState("");
   const [editEndDate, setEditEndDate] = useState("");
+  const [editEndTime, setEditEndTime] = useState("");
   const [editPriority, setEditPriority] = useState<Priority | "">("");
   const [editDescription, setEditDescription] = useState("");
   const [editSubmitting, setEditSubmitting] = useState(false);
@@ -53,14 +61,17 @@ export function TaskModal({ date, tasks, onAdd, onUpdate, onToggle, onDelete, on
       await onAdd({
         title: title.trim(),
         scheduled_date: date,
-        scheduled_time: time ? toISODatetime(date, time) : undefined,
+        scheduled_time: startTime ? toISODatetime(date, startTime) : undefined,
+        // Combine end date + end time into scheduled_end_time; fall back to end date alone at midnight
+        scheduled_end_time: endDate && endTime ? toISODatetime(endDate, endTime) : undefined,
         end_date: endDate || undefined,
         priority: priority || undefined,
       });
       setTitle("");
       setPriority("");
-      setTime("");
+      setStartTime("");
       setEndDate("");
+      setEndTime("");
     } finally {
       setSubmitting(false);
     }
@@ -70,8 +81,9 @@ export function TaskModal({ date, tasks, onAdd, onUpdate, onToggle, onDelete, on
     setEditingTask(task);
     setEditTitle(task.title);
     setEditDate(task.scheduled_date);
-    setEditTime(toTimeInput(task.scheduled_time));
-    setEditEndDate(task.due_date ?? "");
+    setEditStartTime(toTimeInput(task.scheduled_time));
+    setEditEndDate(task.due_date ?? toDateInput(task.scheduled_end_time));
+    setEditEndTime(toTimeInput(task.scheduled_end_time));
     setEditPriority(task.priority ?? "");
     setEditDescription(task.description ?? "");
   };
@@ -84,7 +96,8 @@ export function TaskModal({ date, tasks, onAdd, onUpdate, onToggle, onDelete, on
       await onUpdate(editingTask.id, {
         title: editTitle.trim(),
         scheduled_date: editDate,
-        scheduled_time: editTime ? toISODatetime(editDate, editTime) : undefined,
+        scheduled_time: editStartTime ? toISODatetime(editDate, editStartTime) : undefined,
+        scheduled_end_time: editEndDate && editEndTime ? toISODatetime(editEndDate, editEndTime) : undefined,
         end_date: editEndDate || undefined,
         priority: editPriority || undefined,
         description: editDescription || undefined,
@@ -124,7 +137,7 @@ export function TaskModal({ date, tasks, onAdd, onUpdate, onToggle, onDelete, on
             </label>
             <div className="form-row">
               <label>
-                Date
+                Start Date
                 <input
                   type="date"
                   value={editDate}
@@ -132,23 +145,33 @@ export function TaskModal({ date, tasks, onAdd, onUpdate, onToggle, onDelete, on
                 />
               </label>
               <label>
-                Time
+                Start Time
                 <input
                   type="time"
-                  value={editTime}
-                  onChange={(e) => setEditTime(e.target.value)}
+                  value={editStartTime}
+                  onChange={(e) => setEditStartTime(e.target.value)}
                 />
               </label>
             </div>
-            <label>
-              End Date <span className="field-hint">(multi-day, optional)</span>
-              <input
-                type="date"
-                value={editEndDate}
-                min={editDate}
-                onChange={(e) => setEditEndDate(e.target.value)}
-              />
-            </label>
+            <div className="form-row">
+              <label>
+                End Date <span className="field-hint">(optional)</span>
+                <input
+                  type="date"
+                  value={editEndDate}
+                  min={editDate}
+                  onChange={(e) => setEditEndDate(e.target.value)}
+                />
+              </label>
+              <label>
+                End Time <span className="field-hint">(optional)</span>
+                <input
+                  type="time"
+                  value={editEndTime}
+                  onChange={(e) => setEditEndTime(e.target.value)}
+                />
+              </label>
+            </div>
             <label>
               Priority
               <select value={editPriority} onChange={(e) => setEditPriority(e.target.value as Priority | "")}>
@@ -211,11 +234,11 @@ export function TaskModal({ date, tasks, onAdd, onUpdate, onToggle, onDelete, on
                 </div>
                 <div className="create-row-extra">
                   <label className="inline-label">
-                    <span>Time</span>
+                    <span>Start Time</span>
                     <input
                       type="time"
-                      value={time}
-                      onChange={(e) => setTime(e.target.value)}
+                      value={startTime}
+                      onChange={(e) => setStartTime(e.target.value)}
                     />
                   </label>
                   <label className="inline-label">
@@ -225,6 +248,14 @@ export function TaskModal({ date, tasks, onAdd, onUpdate, onToggle, onDelete, on
                       value={endDate}
                       min={date}
                       onChange={(e) => setEndDate(e.target.value)}
+                    />
+                  </label>
+                  <label className="inline-label">
+                    <span>End Time</span>
+                    <input
+                      type="time"
+                      value={endTime}
+                      onChange={(e) => setEndTime(e.target.value)}
                     />
                   </label>
                 </div>
